@@ -78,7 +78,7 @@ class KibanaConfiguration {
       response.extract[Int](Symbol("version") / Symbol("build_number"))
     this.isSnapshotBuild = response
       .extract[Boolean](Symbol("version") / Symbol("build_snapshot"))
-    this.version = response.extract[Int](Symbol("version") / Symbol("version"))
+    this.version = response.extract[Int](Symbol("version") / Symbol("number"))
 
     this.buildVersion =
       if (this.isSnapshotBuild) s"${this.version}-SNAPSHOT"
