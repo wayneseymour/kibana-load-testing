@@ -49,23 +49,6 @@ class KibanaConfiguration {
       config.getString("app.host"),
       s"'app.host' should be a valid Kibana URL"
     )
-
-    logger.info(s"Getting Kibana status info")
-    val response = new HttpHelper(this).getStatus
-    this.buildHash =
-      response.extract[String](Symbol("version") / Symbol("build_hash"))
-    this.buildNumber =
-      response.extract[Int](Symbol("version") / Symbol("build_number"))
-    this.isSnapshotBuild = response
-      .extract[Boolean](Symbol("version") / Symbol("build_snapshot"))
-
-    this.buildVersion =
-      if (this.isSnapshotBuild) s"${this.buildNumber}-SNAPSHOT"
-      else this.buildNumber.toString
-    if (!this.buildVersion.startsWith(config.getString("app.version")))
-      throw new RuntimeException(
-        s"Kibana version mismatch: instance ${this.buildVersion} vs config ${config.getString("app.version")}"
-      )
     this.isSecurityEnabled = config.getBoolean("security.on")
     this.username = config.getString("auth.username")
     this.password = config.getString("auth.password")
@@ -92,6 +75,23 @@ class KibanaConfiguration {
     this.deploymentId = if (config.hasPath("deploymentId")) {
       Option(config.getString("deploymentId"))
     } else Option(System.getenv("DEPLOYMENT_ID"))
+
+    logger.info(s"Getting Kibana status info")
+    val response = new HttpHelper(this).getStatus
+    this.buildHash =
+      response.extract[String](Symbol("version") / Symbol("build_hash"))
+    this.buildNumber =
+      response.extract[Int](Symbol("version") / Symbol("build_number"))
+    this.isSnapshotBuild = response
+      .extract[Boolean](Symbol("version") / Symbol("build_snapshot"))
+
+    this.buildVersion =
+      if (this.isSnapshotBuild) s"${this.buildNumber}-SNAPSHOT"
+      else this.buildNumber.toString
+    if (!this.buildVersion.startsWith(config.getString("app.version")))
+      throw new RuntimeException(
+        s"Kibana version mismatch: instance ${this.buildVersion} vs config ${config.getString("app.version")}"
+      )
   }
 
   def print(): Unit = {
