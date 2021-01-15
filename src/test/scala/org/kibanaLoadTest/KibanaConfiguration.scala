@@ -14,7 +14,7 @@ class KibanaConfiguration {
 
   val logger: Logger = LoggerFactory.getLogger("KibanaConfiguration")
   var baseUrl = ""
-  var version = 0
+  var version = ""
   var buildVersion = ""
   var isSecurityEnabled = false
   var username = ""
@@ -78,11 +78,12 @@ class KibanaConfiguration {
       response.extract[Int](Symbol("version") / Symbol("build_number"))
     this.isSnapshotBuild = response
       .extract[Boolean](Symbol("version") / Symbol("build_snapshot"))
-    this.version = response.extract[Int](Symbol("version") / Symbol("number"))
+    this.version =
+      response.extract[String](Symbol("version") / Symbol("number"))
 
     this.buildVersion =
       if (this.isSnapshotBuild) s"${this.version}-SNAPSHOT"
-      else this.version.toString
+      else this.version
     if (!this.buildVersion.startsWith(config.getString("app.version")))
       throw new RuntimeException(
         s"Kibana version mismatch: instance ${this.buildVersion} vs config ${config.getString("app.version")}"
