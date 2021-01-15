@@ -52,7 +52,6 @@ class KibanaConfiguration {
     this.isSecurityEnabled = config.getBoolean("security.on")
     this.username = config.getString("auth.username")
     this.password = config.getString("auth.password")
-    this.isAbove79x = new Version(this.buildVersion).isAbove79x
 
     if (
       this.isAbove79x && (!config.hasPathOrNull("auth.providerType") || !config
@@ -64,17 +63,11 @@ class KibanaConfiguration {
       )
     }
 
-    this.loginPayload =
-      if (this.isAbove79x) s"""{"providerType":"${config.getString(
-        "auth.providerType"
-      )}","providerName":"${config.getString(
-        "auth.providerName"
-      )}","currentURL":"${this.baseUrl}/login","params":{"username":"${this.username}","password":"${this.password}"}}"""
-      else s"""{"username":"${this.username}","password":"${this.password}"}"""
-    this.loginStatusCode = if (this.isAbove79x) 200 else 204
-    this.deploymentId = if (config.hasPath("deploymentId")) {
-      Option(config.getString("deploymentId"))
-    } else Option(System.getenv("DEPLOYMENT_ID"))
+    this.loginPayload = s"""{"providerType":"${config.getString(
+      "auth.providerType"
+    )}","providerName":"${config.getString(
+      "auth.providerName"
+    )}","currentURL":"${this.baseUrl}/login","params":{"username":"${this.username}","password":"${this.password}"}}"""
 
     logger.info(s"Getting Kibana status info")
     val response = new HttpHelper(this).getStatus
@@ -92,6 +85,9 @@ class KibanaConfiguration {
       throw new RuntimeException(
         s"Kibana version mismatch: instance ${this.buildVersion} vs config ${config.getString("app.version")}"
       )
+    this.deploymentId = if (config.hasPath("deploymentId")) {
+      Option(config.getString("deploymentId"))
+    } else Option(System.getenv("DEPLOYMENT_ID"))
   }
 
   def print(): Unit = {
