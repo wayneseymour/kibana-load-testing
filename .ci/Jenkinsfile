@@ -59,7 +59,7 @@ pipeline {
                                 else
                                     export cloudDeploy=${params.STACK_VERSION}
                                 fi
-                                mvn clean -q -Dmaven.test.failure.ignore=true compile
+                                mvn -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.test.failure.ignore=true -q clean compile
                                 mvn gatling:test -q -Dgatling.simulationClass=org.kibanaLoadTest.simulation.DemoJourney
                             """
                         }
