@@ -1,6 +1,6 @@
 package org.kibanaLoadTest
 
-class RunConfiguration {
+object RunConfiguration {
   // -DdeploymentConfig=path/to/config, default one deploys basic instance on GCP
   val cloudDeployConfigFile =
     System.getProperty("deploymentConfig", "config/deploy/default.conf")

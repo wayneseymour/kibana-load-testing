@@ -23,7 +23,7 @@ class BaseSimulation extends Simulation {
 
   object props {
     val nbUsers: Int =
-      Option(System.getProperty("users").toInt).getOrElse(defaultNbUsers)
+      Integer.valueOf(System.getProperty("users", defaultNbUsers.toString))
     val simulationTimeout: FiniteDuration =
       FiniteDuration(
         10,
@@ -39,7 +39,7 @@ class BaseSimulation extends Simulation {
         20,
         TimeUnit.SECONDS
       )
-    val run = new RunConfiguration()
+    val run = RunConfiguration
   }
 
   def scenarioName(module: String): String = {
