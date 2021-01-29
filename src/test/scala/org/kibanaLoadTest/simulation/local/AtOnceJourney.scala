@@ -7,7 +7,7 @@ import org.kibanaLoadTest.scenario.{Canvas, Dashboard, Discover}
 
 class AtOnceJourney extends BaseSimulation {
   // overriding default users count for build testing
-  defaultNbUsers = 200
+  defaultNbUsers = 250
 
   val scnDiscover: ScenarioBuilder = scenario(scenarioName("discover"))
     .exec(loginStep.pause(props.loginPause))
